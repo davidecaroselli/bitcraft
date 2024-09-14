@@ -11,6 +11,8 @@
 #include <sstream>
 
 Engine3D *GlobalInstance = nullptr;
+float glScaleX = 0.f;
+float glScaleY = 0.f;
 uint64_t LastRenderTimestamp = 0;
 
 uint64_t GetTimeToNextRender(uint64_t *timestamp = nullptr) {
@@ -46,16 +48,11 @@ struct FPSCounter {
 
         float labelWidth = 8 * (float) fpsLog.size();
 
-        GLint m_viewport[4];
-        glGetIntegerv(GL_VIEWPORT, m_viewport);
-        float wScale = 2.f / (float) m_viewport[2];
-        float hScale = 2.f / (float) m_viewport[3];
-
         glColor3f(0, 0, 0);
-        glRectf(-1, -1, ((8 + labelWidth + 8) * wScale) - 1.f, (20 * hScale) - 1.f);
+        glRectf(-1, -1, (8 + labelWidth + 8) * glScaleX - 1, 20 * glScaleY - 1);
 
         glColor3f(1, 1, 1);
-        glRasterPos2f((8 * wScale) - 1.f, (6 * hScale) - 1.f);
+        glRasterPos2f(8 * glScaleX - 1, 6 * glScaleY - 1);
         for (char c: fpsLog)
             glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
     }
@@ -63,6 +60,11 @@ struct FPSCounter {
 
 void render() {
     if (GlobalInstance == nullptr) return;
+
+    GLint m_viewport[4];
+    glGetIntegerv(GL_VIEWPORT, m_viewport);
+    glScaleX = 2.f / (float) m_viewport[2];
+    glScaleY = 2.f / (float) m_viewport[3];
 
     uint64_t currentTimestamp;
     // Check if render has been called too soon
@@ -104,7 +106,7 @@ void idle() {
 }
 
 Engine3D::Engine3D(std::string name, unsigned int width, unsigned int height, unsigned int fps)
-        : name(std::move(name)), width(width), height(height), aspectRatio((float) width / (float) height), fps(fps) {
+        : name(std::move(name)), width(width), height(height), aspectRatio((float) height / (float) width), fps(fps) {
     if (GlobalInstance != nullptr)
         throw std::runtime_error("Only one instance of Engine3D is allowed");
 
@@ -139,7 +141,7 @@ void Engine3D::ComputeProjectionMatrix() {
             a * f, 0, 0, 0,
             0, f, 0, 0,
             0, 0, q, 1,
-            0, 0, zNear * q, 0
+            0, 0, - zNear * q, 0
     };
 }
 
@@ -148,4 +150,24 @@ void Engine3D::ComputeProjectionMatrix() {
 void Engine3D::ClearScreen(const Color &color) {
     glClearColor(color.r, color.g, color.b, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Engine3D::DrawTriangle(const triangle_t &triangle, const Color &color) {
+    triangle_t prjTri = triangle * prjMatrix;
+
+    glBegin(GL_LINE_LOOP);
+    glColor3f(color.r, color.g, color.b);
+    for (const auto &v: prjTri.v)
+        glVertex2f(v.x, v.y);
+    glEnd();
+}
+
+void Engine3D::FillTriangle(const triangle_t &triangle, const Color &color) {
+    triangle_t prjTri = triangle * prjMatrix;
+
+    glBegin(GL_TRIANGLES);
+    glColor3f(color.r, color.g, color.b);
+    for (const auto &v: prjTri.v)
+        glVertex2f(v.x, v.y);
+    glEnd();
 }

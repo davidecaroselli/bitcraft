@@ -71,6 +71,10 @@ public:
 
     void ClearScreen(const Color &color);
 
+    void DrawTriangle(const triangle_t &triangle, const Color &color);
+
+    void FillTriangle(const triangle_t &triangle, const Color &color);
+
 protected:
     const std::string name;
     const unsigned int width;
@@ -83,7 +87,7 @@ protected:
     float zFar = 1000;
     float zNear = 0.1;
 
-    matrix_t prjMatrix;
+    matrix_t prjMatrix = {0};
 
     void ComputeProjectionMatrix();
 };
