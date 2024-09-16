@@ -25,7 +25,7 @@ mesh_t cube({
 
 class GameEngine : public Engine3D {
 public:
-    explicit GameEngine(const std::string &name) : Engine3D(name, 640, 480, 60) {};
+    explicit GameEngine(const std::string &name) : Engine3D(name) {};
 
     float xRot = 0;
     float yRot = 0;
@@ -62,9 +62,10 @@ public:
         int c = 0;
 
         for (const auto &face: cube.faces) {
-            triangle_t trnFace = face
-                                 * matrix_t::Rotate(xRot, yRot, 0)
-                                 * matrix_t::Translate(0, 0, 4);
+            triangle_t trnFace = face * (
+                    matrix_t::Rotate(xRot, yRot, 0) *
+                    matrix_t::Translate(0, 0, 4)
+            );
 
             DrawTriangle(trnFace, colors[c++]);
         }
@@ -76,7 +77,7 @@ public:
 int main() {
     GameEngine game("Demo");
     game.SetShowDebugInfo(true);
-    game.Start(false);
+    game.Start(640, 480, 60, false);
 
     return 0;
 }

@@ -7,29 +7,20 @@
 
 #include <string>
 #include "algebra3d.h"
+#include "Screen.h"
 
 struct Color {
     float r, g, b;
 };
 
 class Engine3D {
+    friend class ScreenCallback;
+
 public:
-    Engine3D(std::string name, unsigned int width, unsigned int height, unsigned int fps = 60);
+    explicit Engine3D(std::string name);
 
-    [[nodiscard]] unsigned int GetWidth() const {
-        return width;
-    }
-
-    [[nodiscard]] unsigned int GetHeight() const {
-        return height;
-    }
-
-    [[nodiscard]] float GetAspectRatio() const {
-        return aspectRatio;
-    }
-
-    [[nodiscard]] unsigned int GetFPS() const {
-        return fps;
+    [[nodiscard]] const Screen *GetScreen() const {
+        return screen;
     }
 
     [[nodiscard]] bool ShowDebugInfo() const {
@@ -63,7 +54,7 @@ public:
         ComputeProjectionMatrix();
     }
 
-    void Start(bool fullscreen = false);
+    void Start(unsigned int width, unsigned int height, unsigned int fps = 60, bool fullscreen = false);
 
     virtual bool Render(float elapsedTime) = 0;
 
@@ -77,10 +68,7 @@ public:
 
 protected:
     const std::string name;
-    const unsigned int width;
-    const unsigned int height;
-    const float aspectRatio;
-    const unsigned int fps;
+    Screen *screen;
 
     bool showDebugInfo = false;
     float fov = 90;
@@ -88,6 +76,8 @@ protected:
     float zNear = 0.1;
 
     matrix_t prjMatrix = {0};
+
+    void OnRender(float elapsedTime);
 
     void ComputeProjectionMatrix();
 };
