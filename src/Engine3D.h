@@ -13,6 +13,22 @@ struct Color {
     float r, g, b;
 };
 
+class DebugInfoView {
+public:
+    explicit DebugInfoView(float updateSecs = 0.5f) : updateSecs(updateSecs) {}
+
+    void OnRender(float elapsedTime);
+
+    void DrawToScreen(Screen *screen) const;
+
+private:
+    const float updateSecs;
+    float tElapsedTime = 0;
+    int renderCount = 0;
+
+    float fps = 0;
+};
+
 class Engine3D {
     friend class ScreenCallback;
 
@@ -70,6 +86,7 @@ protected:
     const std::string name;
     Screen *screen;
 
+    DebugInfoView debugView;
     bool showDebugInfo = false;
     float fov = 90;
     float zFar = 1000;
