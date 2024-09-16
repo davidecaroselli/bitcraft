@@ -106,8 +106,26 @@ matrix_t matrix_t::Rotate(float ax, float ay, float az) {
 
 mesh_t::mesh_t(const std::vector<triangle_t> &faces) : faces(faces) {}
 
+vertex_t triangle_t::normal() const {
+    vertex_t line1 = v[1] - v[0];
+    vertex_t line2 = v[2] - v[0];
+
+    vertex_t norm = {
+            line1.y * line2.z - line1.z * line2.y,
+            line1.z * line2.x - line1.x * line2.z,
+            line1.x * line2.y - line1.y * line2.x
+    };
+    norm.normalize();
+
+    return norm;
+}
+
 triangle_t triangle_t::operator*(const matrix_t &m) const {
     return {v[0] * m, v[1] * m, v[2] * m};
+}
+
+float vertex_t::length() const {
+    return sqrtf(x * x + y * y + z * z);
 }
 
 vertex_t vertex_t::operator*(const matrix_t &m) const {
@@ -119,4 +137,19 @@ vertex_t vertex_t::operator*(const matrix_t &m) const {
     if (ow == 0) ow = 1;
 
     return {ox / ow, oy / ow, oz / ow};
+}
+
+float vertex_t::operator*(const vertex_t &v) const {
+    return x * v.x + y * v.y + z * v.z;
+}
+
+vertex_t vertex_t::operator-(const vertex_t &v) const {
+    return {x - v.x, y - v.y, z - v.z};
+}
+
+void vertex_t::normalize() {
+    float l = length();
+    x /= l;
+    y /= l;
+    z /= l;
 }

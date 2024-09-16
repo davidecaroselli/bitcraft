@@ -26,11 +26,19 @@ struct matrix_t {
 struct vertex_t {
     float x, y, z;
 
+    void normalize();
+
+    [[nodiscard]] float length() const;
+
     vertex_t operator*(const matrix_t &m) const;
+    float operator*(const vertex_t &v) const; // dot product
+    vertex_t operator-(const vertex_t &v) const;
 };
 
 struct triangle_t {
     vertex_t v[3];
+
+    [[nodiscard]] vertex_t normal() const;
 
     triangle_t operator*(const matrix_t &m) const;
 };

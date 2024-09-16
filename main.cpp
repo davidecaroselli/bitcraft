@@ -7,17 +7,17 @@ mesh_t cube({
                     {0, 0, 0, 0, 1, 0, 1, 1, 0},
                     {0, 0, 0, 1, 1, 0, 1, 0, 0},  // Front
 
-                    {0, 0, 1, 0, 1, 1, 1, 1, 1},
-                    {0, 0, 1, 1, 1, 1, 1, 0, 1},  // Back
+                    {0, 0, 1, 1, 1, 1, 0, 1, 1},
+                    {0, 0, 1, 1, 0, 1, 1, 1, 1},  // Back
 
-                    {0, 0, 0, 0, 1, 0, 0, 1, 1},
-                    {0, 0, 0, 0, 1, 1, 0, 0, 1},  // Left
+                    {0, 0, 0, 0, 1, 1, 0, 1, 0},
+                    {0, 0, 0, 0, 0, 1, 0, 1, 1},  // Left
 
                     {1, 0, 0, 1, 1, 0, 1, 1, 1},
                     {1, 0, 0, 1, 1, 1, 1, 0, 1},  // Right
 
-                    {0, 0, 0, 0, 0, 1, 1, 0, 1},
-                    {0, 0, 0, 1, 0, 1, 1, 0, 0},  // Bottom
+                    {0, 0, 0, 1, 0, 1, 0, 0, 1},
+                    {0, 0, 0, 1, 0, 0, 1, 0, 1},  // Bottom
 
                     {0, 1, 0, 0, 1, 1, 1, 1, 1},
                     {0, 1, 0, 1, 1, 1, 1, 1, 0}   // Top
@@ -39,35 +39,21 @@ public:
 
         ClearScreen({0.2f, 0.2f, 0.2f});
 
-        std::vector<Color> colors = {
-                {1, 0, 0},
-                {1, 0, 0},
-
-                {0, 1, 0},
-                {0, 1, 0},
-
-                {0, 0, 1},
-                {0, 0, 1},
-
-                {1, 1, 0},
-                {1, 1, 0},
-
-                {1, 0, 1},
-                {1, 0, 1},
-
-                {0, 1, 1},
-                {0, 1, 1}
-        };
-
-        int c = 0;
-
         for (const auto &face: cube.faces) {
             triangle_t trnFace = face * (
+                    matrix_t::Translate(-.5, -.5, 0) *
                     matrix_t::Rotate(xRot, yRot, 0) *
                     matrix_t::Translate(0, 0, 4)
-            );
 
-            DrawTriangle(trnFace, colors[c++]);
+            );
+            vertex_t normal = trnFace.normal();
+            vertex_t camera = {0, 0, 0};
+            vertex_t light = {0, 0, -1};
+
+            float color = normal * light;
+
+            if (normal * (trnFace.v[0] - camera) < 0)
+                FillTriangle(trnFace, {color, color, color});
         }
 
         return true;
@@ -77,7 +63,7 @@ public:
 int main() {
     GameEngine game("Demo");
     game.SetShowDebugInfo(true);
-    game.Start(640, 480, 60, false);
+    game.Start(640, 480, 60, true);
 
     return 0;
 }
