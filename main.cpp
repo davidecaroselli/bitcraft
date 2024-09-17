@@ -41,7 +41,7 @@ public:
 
         for (const auto &face: cube.faces) {
             triangle_t trnFace = face * (
-                    matrix_t::Translate(-.5, -.5, 0) *
+                    matrix_t::Translate(-.5, -.5, -.5) *
                     matrix_t::Rotate(xRot, yRot, 0) *
                     matrix_t::Translate(0, 0, 4)
 
@@ -63,7 +63,7 @@ public:
 int main() {
     GameEngine game("Demo");
     game.SetShowDebugInfo(true);
-    game.Start(640, 480, 60, true);
+    game.Start(640, 480, 60, false);
 
     return 0;
 }
