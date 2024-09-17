@@ -25,6 +25,8 @@ mesh_t cube({
 
 class GameEngine : public Engine3D {
 public:
+    vertex_t camera = {0, 0, 0};
+    vertex_t light = {0, 0, -1};
     mesh_t obj;
 
     explicit GameEngine(const std::string &name) : Engine3D(name) {
@@ -43,21 +45,30 @@ public:
 
         ClearScreen({0.2f, 0.2f, 0.2f});
 
+        std::vector<triangle_t> scene;
+        scene.reserve(obj.faces.size());
+
         for (const auto &face: obj.faces) {
-            triangle_t trnFace = face * (
+            scene.push_back(face * (
                     matrix_t::Translate(-.5, -.5, -.5) *
                     matrix_t::Rotate(xRot, yRot, 0) *
                     matrix_t::Translate(0, 0, 10)
+            ));
+        }
 
-            );
-            vertex_t normal = trnFace.normal();
-            vertex_t camera = {0, 0, 0};
-            vertex_t light = {0, 0, -1};
+        std::sort(scene.begin(), scene.end(), [](const triangle_t &a, const triangle_t &b) {
+            float az = (a.v[0].z + a.v[1].z + a.v[2].z) / 3.f;
+            float bz = (b.v[0].z + b.v[1].z + b.v[2].z) / 3.f;
+            return az > bz;
+        });
 
-            float color = normal * light;
+        for (const auto &face: scene) {
+            vertex_t normal = face.normal();
 
-            if (normal * (trnFace.v[0] - camera) < 0)
-                FillTriangle(trnFace, {color, color, color});
+            if (normal * (face.v[0] - camera) < 0) {
+                float color = normal * light;
+                FillTriangle(face, {color, color, color});
+            }
         }
 
         return true;
@@ -67,7 +78,7 @@ public:
 int main() {
     GameEngine game("Demo");
     game.SetShowDebugInfo(true);
-    game.Start(640, 480, 60, false);
+    game.Start(640, 480, 60, true);
 
     return 0;
 }
