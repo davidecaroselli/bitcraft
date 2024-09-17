@@ -1,16 +1,20 @@
 #include <iostream>
 #include "Engine3D.h"
 #include "geometry/mesh.h"
-#include "geometry/mesh.h"
 
 class GameEngine : public Engine3D {
 public:
-    vertex_t camera = {0, 0, 0};
-    vertex_t light = {0, 0, -1};
+    vertex_t camera{};
+    vertex_t light{};
     mesh_t obj;
 
     explicit GameEngine(const std::string &name) : Engine3D(name) {
         obj = mesh_t::load_from_obj("../res/teapot.obj");
+
+        camera = {0, 0, 0};
+
+        light = {0, 0, -1};
+        light = light / light.length();
     };
 
     float xRot = 0;
@@ -58,7 +62,7 @@ public:
 int main() {
     GameEngine game("Demo");
     game.SetShowDebugInfo(true);
-    game.Start(640, 480, 60, true);
+    game.Start(640, 480, 60, false);
 
     return 0;
 }

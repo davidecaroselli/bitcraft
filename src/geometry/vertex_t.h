@@ -11,6 +11,8 @@
 struct vertex_t {
     float x, y, z;
 
+    vertex_t() = default;
+
     vertex_t(float x, float y, float z) : x(x), y(y), z(z) {}
 
     [[nodiscard]] inline vertex_t cross(const vertex_t &v) const {
