@@ -104,8 +104,6 @@ matrix_t matrix_t::Rotate(float ax, float ay, float az) {
     return rotation;
 }
 
-mesh_t::mesh_t(const std::vector<triangle_t> &faces) : faces(faces) {}
-
 vertex_t triangle_t::normal() const {
     vertex_t line1 = v[1] - v[0];
     vertex_t line2 = v[2] - v[0];

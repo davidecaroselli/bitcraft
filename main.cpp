@@ -1,7 +1,7 @@
 #include <iostream>
 #include "algebra3d.h"
 #include "Engine3D.h"
-#include <unistd.h>
+#include <mesh.h>
 
 mesh_t cube({
                     {0, 0, 0, 0, 1, 0, 1, 1, 0},
@@ -25,7 +25,11 @@ mesh_t cube({
 
 class GameEngine : public Engine3D {
 public:
-    explicit GameEngine(const std::string &name) : Engine3D(name) {};
+    mesh_t obj;
+
+    explicit GameEngine(const std::string &name) : Engine3D(name) {
+        obj = mesh_t::from_obj("../res/teapot.obj");
+    };
 
     float xRot = 0;
     float yRot = 0;
@@ -39,11 +43,11 @@ public:
 
         ClearScreen({0.2f, 0.2f, 0.2f});
 
-        for (const auto &face: cube.faces) {
+        for (const auto &face: obj.faces) {
             triangle_t trnFace = face * (
                     matrix_t::Translate(-.5, -.5, -.5) *
                     matrix_t::Rotate(xRot, yRot, 0) *
-                    matrix_t::Translate(0, 0, 4)
+                    matrix_t::Translate(0, 0, 10)
 
             );
             vertex_t normal = trnFace.normal();

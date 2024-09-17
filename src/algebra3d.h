@@ -43,10 +43,4 @@ struct triangle_t {
     triangle_t operator*(const matrix_t &m) const;
 };
 
-struct mesh_t {
-    std::vector<triangle_t> faces;
-
-    explicit mesh_t(const std::vector<triangle_t> &faces);
-};
-
 #endif //ENGINE3D_ALGEBRA3D_H

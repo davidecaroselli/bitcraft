@@ -8,8 +8,8 @@ include_directories(src)
 add_executable(${PROJECT_NAME} main.cpp
         src/algebra3d.h src/algebra3d.cpp
         src/Engine3D.h src/Engine3D.cpp
-        src/Screen.cpp
-        src/Screen.h)
+        src/Screen.h src/Screen.cpp
+        src/mesh.h src/mesh.cpp)
 
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
