@@ -6,13 +6,13 @@
 #include <fstream>
 #include <sstream>
 
-mesh_t mesh_t::from_obj(const std::string &filename) {
+mesh_t mesh_t::load_from_obj(const std::string &filename) {
     std::ifstream file(filename);
 
     if (!file.is_open())
         throw std::runtime_error("Could not open file");
 
-    std::vector<triangle_t> faces;
+    std::vector<face_t> faces;
     std::vector<vertex_t> vertices;
 
     std::string line;
@@ -29,8 +29,7 @@ mesh_t mesh_t::from_obj(const std::string &filename) {
             if (coords.size() != 3)
                 throw std::runtime_error("Invalid vertex format");
 
-            vertex_t vertex{coords[0], coords[1], coords[2]};
-            vertices.push_back(vertex);
+            vertices.emplace_back(coords[0], coords[1], coords[2]);
         } else if (line[0] == 'f') {
             std::istringstream iss(line);
             std::string token;
@@ -47,12 +46,9 @@ mesh_t mesh_t::from_obj(const std::string &filename) {
             if (indices.size() != 3)
                 throw std::runtime_error("Invalid face format");
 
-            triangle_t face{
-                vertices[indices[0] - 1],
-                vertices[indices[1] - 1],
-                vertices[indices[2] - 1]};
-
-            faces.push_back(face);
+            faces.emplace_back(vertices[indices[0] - 1],
+                               vertices[indices[1] - 1],
+                               vertices[indices[2] - 1]);
         }
     }
 

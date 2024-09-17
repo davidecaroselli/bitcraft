@@ -6,8 +6,8 @@
 #define ENGINE3D_ENGINE3D_H
 
 #include <string>
-#include "algebra3d.h"
 #include "Screen.h"
+#include "geometry/face_t.h"
 
 struct Color {
     float r, g, b;
@@ -78,9 +78,9 @@ public:
 
     void ClearScreen(const Color &color);
 
-    void DrawTriangle(const triangle_t &triangle, const Color &color);
+    void DrawTriangle(const face_t &triangle, const Color &color);
 
-    void FillTriangle(const triangle_t &triangle, const Color &color);
+    void FillTriangle(const face_t &triangle, const Color &color);
 
 protected:
     const std::string name;

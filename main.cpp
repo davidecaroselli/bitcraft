@@ -1,27 +1,7 @@
 #include <iostream>
-#include "algebra3d.h"
 #include "Engine3D.h"
-#include <mesh.h>
-
-mesh_t cube({
-                    {0, 0, 0, 0, 1, 0, 1, 1, 0},
-                    {0, 0, 0, 1, 1, 0, 1, 0, 0},  // Front
-
-                    {0, 0, 1, 1, 1, 1, 0, 1, 1},
-                    {0, 0, 1, 1, 0, 1, 1, 1, 1},  // Back
-
-                    {0, 0, 0, 0, 1, 1, 0, 1, 0},
-                    {0, 0, 0, 0, 0, 1, 0, 1, 1},  // Left
-
-                    {1, 0, 0, 1, 1, 0, 1, 1, 1},
-                    {1, 0, 0, 1, 1, 1, 1, 0, 1},  // Right
-
-                    {0, 0, 0, 1, 0, 1, 0, 0, 1},
-                    {0, 0, 0, 1, 0, 0, 1, 0, 1},  // Bottom
-
-                    {0, 1, 0, 0, 1, 1, 1, 1, 1},
-                    {0, 1, 0, 1, 1, 1, 1, 1, 0}   // Top
-            });
+#include "geometry/mesh.h"
+#include "geometry/mesh.h"
 
 class GameEngine : public Engine3D {
 public:
@@ -30,7 +10,7 @@ public:
     mesh_t obj;
 
     explicit GameEngine(const std::string &name) : Engine3D(name) {
-        obj = mesh_t::from_obj("../res/teapot.obj");
+        obj = mesh_t::load_from_obj("../res/teapot.obj");
     };
 
     float xRot = 0;
@@ -45,7 +25,7 @@ public:
 
         ClearScreen({0.2f, 0.2f, 0.2f});
 
-        std::vector<triangle_t> scene;
+        std::vector<face_t> scene;
         scene.reserve(obj.faces.size());
 
         for (const auto &face: obj.faces) {
@@ -56,16 +36,16 @@ public:
             ));
         }
 
-        std::sort(scene.begin(), scene.end(), [](const triangle_t &a, const triangle_t &b) {
-            float az = (a.v[0].z + a.v[1].z + a.v[2].z) / 3.f;
-            float bz = (b.v[0].z + b.v[1].z + b.v[2].z) / 3.f;
+        std::sort(scene.begin(), scene.end(), [](const face_t &a, const face_t &b) {
+            float az = (a[0].z + a[1].z + a[2].z) / 3.f;
+            float bz = (b[0].z + b[1].z + b[2].z) / 3.f;
             return az > bz;
         });
 
         for (const auto &face: scene) {
             vertex_t normal = face.normal();
 
-            if (normal * (face.v[0] - camera) < 0) {
+            if (normal * (face[0] - camera) < 0) {
                 float color = normal * light;
                 FillTriangle(face, {color, color, color});
             }

@@ -6,16 +6,16 @@
 #define BITCRAFT_MESH_H
 
 #include <vector>
-#include "algebra3d.h"
+#include "face_t.h"
 
 struct mesh_t {
-    std::vector<triangle_t> faces;
+    std::vector<face_t> faces;
 
-    static mesh_t from_obj(const std::string &filename);
+    static mesh_t load_from_obj(const std::string &filename);
 
     mesh_t() = default;
 
-    explicit mesh_t(const std::vector<triangle_t> &faces) : faces(faces) {}
+    explicit mesh_t(const std::vector<face_t> &faces) : faces(faces) {}
 };
 
 
