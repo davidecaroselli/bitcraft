@@ -3,7 +3,7 @@
 //
 
 #include <cmath>
-#include "matrix_t.h"
+#include "matrix.h"
 
 matrix_t matrix_t::Scale(float x, float y, float z) {
     return {{

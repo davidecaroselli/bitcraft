@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Engine3D.h"
 #include "geometry/mesh.h"
+#include <GLUT/glut.h>
 
 class GameEngine : public Engine3D {
 public:
@@ -13,19 +14,22 @@ public:
 
         camera = {0, 0, 0};
 
-        light = {0, 0, -1};
+        light = {1, 1, -1};
         light = light / light.length();
     };
 
-    float xRot = 0;
-    float yRot = 0;
+    float translateX = 0;
+    float translateY = 0;
+    float translateZ = 10;
 
     bool Render(float elapsedTime) override {
-        xRot += 2.f * elapsedTime;
-        yRot += 1.4f * elapsedTime;
-
-        if (xRot > M_PI * 2) xRot -= M_PI * 2;
-        if (yRot > M_PI * 2) yRot -= M_PI * 2;
+        float speed = 80.;
+        if (input->IsKeyPressed('w')) translateZ -= speed * elapsedTime;
+        if (input->IsKeyPressed('s')) translateZ += speed * elapsedTime;
+        if (input->IsKeyPressed('a')) translateX += speed * elapsedTime;
+        if (input->IsKeyPressed('d')) translateX -= speed * elapsedTime;
+        if (input->IsKeyPressed('q')) translateY += speed * elapsedTime;
+        if (input->IsKeyPressed('e')) translateY -= speed * elapsedTime;
 
         ClearScreen({0.2f, 0.2f, 0.2f});
 
@@ -34,25 +38,35 @@ public:
 
         for (const auto &face: obj.faces) {
             scene.push_back(face * (
-                    matrix_t::Translate(-.5, -.5, -.5) *
-                    matrix_t::Rotate(xRot, yRot, 0) *
-                    matrix_t::Translate(0, 0, 10)
+                    matrix_t::Translate(translateX, translateY, translateZ)
             ));
         }
 
-        std::sort(scene.begin(), scene.end(), [](const face_t &a, const face_t &b) {
+        std::vector<face_t> facesToRaster;
+        facesToRaster.reserve(scene.size());
+
+        for (auto &face: scene) {
+            vertex_t normal = face.normal();
+
+            if (normal * (face[0] - camera) < 0) {
+                float color = normal * light;
+                face.color = {color, color, color};
+
+                facesToRaster.push_back(face * prjMatrix);
+            }
+        }
+
+        // Rasterize
+
+        std::sort(facesToRaster.begin(), facesToRaster.end(), [](const face_t &a, const face_t &b) {
             float az = (a[0].z + a[1].z + a[2].z) / 3.f;
             float bz = (b[0].z + b[1].z + b[2].z) / 3.f;
             return az > bz;
         });
 
-        for (const auto &face: scene) {
-            vertex_t normal = face.normal();
-
-            if (normal * (face[0] - camera) < 0) {
-                float color = normal * light;
-                FillTriangle(face, {color, color, color});
-            }
+        for (const auto &face: facesToRaster) {
+            FillTriangle(face, face.color);
+//            DrawTriangle(face, {1, 1, 1});
         }
 
         return true;

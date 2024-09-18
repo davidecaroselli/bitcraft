@@ -9,9 +9,11 @@ add_executable(${PROJECT_NAME} main.cpp
         src/Engine3D.h src/Engine3D.cpp
         src/Screen.h src/Screen.cpp
         src/geometry/mesh.h src/geometry/mesh.cpp
-        src/geometry/vertex_t.h
-        src/geometry/matrix_t.h src/geometry/matrix_t.cpp
-        src/geometry/face_t.h src/geometry/face_t.cpp)
+        src/geometry/vertex.h
+        src/geometry/color.h
+        src/geometry/matrix.h src/geometry/matrix.cpp
+        src/geometry/face.h src/geometry/face.cpp
+        src/InputController.h src/InputController.cpp)
 
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)

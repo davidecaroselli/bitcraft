@@ -2,10 +2,10 @@
 // Created by Davide Caroselli on 17/09/24.
 //
 
-#ifndef BITCRAFT_VERTEX_T_H
-#define BITCRAFT_VERTEX_T_H
+#ifndef BITCRAFT_VERTEX_H
+#define BITCRAFT_VERTEX_H
 
-#include "matrix_t.h"
+#include "matrix.h"
 #include <cmath>
 
 struct vertex_t {
@@ -53,4 +53,4 @@ struct vertex_t {
 };
 
 
-#endif //BITCRAFT_VERTEX_T_H
+#endif //BITCRAFT_VERTEX_H

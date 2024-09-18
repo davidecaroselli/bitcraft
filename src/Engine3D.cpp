@@ -55,7 +55,8 @@ void DebugInfoView::DrawToScreen(Screen *screen) const {
         glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
 }
 
-Engine3D::Engine3D(std::string name) : name(std::move(name)), screen(Screen::GetInstance()) {
+Engine3D::Engine3D(std::string name) : name(std::move(name)), screen(Screen::GetInstance()),
+                                       input(InputController::GetInstance()) {
     auto *callback = new ScreenCallback(this);
     screen->SetCallback(callback);
 }
@@ -63,6 +64,9 @@ Engine3D::Engine3D(std::string name) : name(std::move(name)), screen(Screen::Get
 void Engine3D::Start(unsigned int width, unsigned int height, unsigned int fps, bool fullscreen) {
     screen->Init(name, width, height, fps);
     screen->SetFullscreen(fullscreen);
+
+    input->Init();
+
     ComputeProjectionMatrix();
     glutMainLoop();
 }
@@ -91,27 +95,23 @@ void Engine3D::OnRender(float elapsedTime) {
 
 // Draw functions ---------------------------------------------------
 
-void Engine3D::ClearScreen(const Color &color) {
+void Engine3D::ClearScreen(const color_t &color) {
     glClearColor(color.r, color.g, color.b, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Engine3D::DrawTriangle(const face_t &triangle, const Color &color) {
-    face_t prjTri = triangle * prjMatrix;
-
+void Engine3D::DrawTriangle(const face_t &triangle, const color_t &color) {
     glBegin(GL_LINE_LOOP);
     glColor3f(color.r, color.g, color.b);
-    for (const auto &v: prjTri.vs)
+    for (const auto &v: triangle.vs)
         glVertex2f(v.x, v.y);
     glEnd();
 }
 
-void Engine3D::FillTriangle(const face_t &triangle, const Color &color) {
-    face_t prjTri = triangle * prjMatrix;
-
+void Engine3D::FillTriangle(const face_t &triangle, const color_t &color) {
     glBegin(GL_TRIANGLES);
     glColor3f(color.r, color.g, color.b);
-    for (const auto &v: prjTri.vs)
+    for (const auto &v: triangle.vs)
         glVertex2f(v.x, v.y);
     glEnd();
 }

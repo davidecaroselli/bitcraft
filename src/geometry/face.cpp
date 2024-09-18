@@ -2,7 +2,7 @@
 // Created by Davide Caroselli on 17/09/24.
 //
 
-#include "face_t.h"
+#include "face.h"
 
 vertex_t face_t::normal() const {
     vertex_t line1 = vs[1] - vs[0];
@@ -18,5 +18,5 @@ vertex_t face_t::normal() const {
 }
 
 face_t face_t::operator*(const matrix_t &m) const {
-    return {vs[0] * m, vs[1] * m, vs[2] * m};
+    return {vs[0] * m, vs[1] * m, vs[2] * m, color};
 }

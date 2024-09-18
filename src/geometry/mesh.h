@@ -6,7 +6,7 @@
 #define BITCRAFT_MESH_H
 
 #include <vector>
-#include "face_t.h"
+#include "face.h"
 
 struct mesh_t {
     std::vector<face_t> faces;

@@ -2,8 +2,8 @@
 // Created by Davide Caroselli on 17/09/24.
 //
 
-#ifndef BITCRAFT_MATRIX_T_H
-#define BITCRAFT_MATRIX_T_H
+#ifndef BITCRAFT_MATRIX_H
+#define BITCRAFT_MATRIX_H
 
 
 struct matrix_t {
@@ -55,4 +55,4 @@ struct matrix_t {
 };
 
 
-#endif //BITCRAFT_MATRIX_T_H
+#endif //BITCRAFT_MATRIX_H

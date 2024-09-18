@@ -7,11 +7,9 @@
 
 #include <string>
 #include "Screen.h"
-#include "geometry/face_t.h"
-
-struct Color {
-    float r, g, b;
-};
+#include "geometry/color.h"
+#include "geometry/face.h"
+#include "InputController.h"
 
 class DebugInfoView {
 public:
@@ -76,15 +74,16 @@ public:
 
     // Draw functions ---------------------------------------------------
 
-    void ClearScreen(const Color &color);
+    void ClearScreen(const color_t &color);
 
-    void DrawTriangle(const face_t &triangle, const Color &color);
+    void DrawTriangle(const face_t &triangle, const color_t &color);
 
-    void FillTriangle(const face_t &triangle, const Color &color);
+    void FillTriangle(const face_t &triangle, const color_t &color);
 
 protected:
     const std::string name;
     Screen *screen;
+    InputController *input;
 
     DebugInfoView debugView;
     bool showDebugInfo = false;
