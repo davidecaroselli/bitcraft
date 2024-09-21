@@ -47,7 +47,7 @@ public:
         MoveUp(-delta);
     }
 
-    void Rotate(float yaw);
+    void Rotate(float tilt, float yaw, float roll);
 
     [[nodiscard]] const vertex_t &GetPosition() const {
         return position;

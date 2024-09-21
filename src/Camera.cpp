@@ -46,8 +46,8 @@ matrix_t Camera::GetViewMatrix() const {
     };
 }
 
-void Camera::Rotate(float yaw) {
-    matrix_t rotation = matrix_t::Rotate(0, yaw, 0);
+void Camera::Rotate(float tilt, float yaw, float roll) {
+    matrix_t rotation = matrix_t::Rotate(tilt, yaw, roll);
     forward *= rotation;
     right *= rotation;
     up *= rotation;
