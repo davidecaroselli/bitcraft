@@ -17,38 +17,44 @@ mesh_t mesh_t::load_from_obj(const std::string &filename) {
 
     std::string line;
     while (std::getline(file, line)) {
-        if (line[0] == 'v') {
-            std::istringstream iss(line);
-            std::string token;
+        std::istringstream sLine(line);
+        std::string token;
+
+        sLine >> token;
+
+        if ("v" == token) {
             std::vector<float> coords;
-            while (iss >> token) {
-                if (token[0] == 'v') continue;
+            while (sLine >> token)
                 coords.push_back(std::stof(token));
-            }
 
             if (coords.size() != 3)
-                throw std::runtime_error("Invalid vertex format");
+                throw std::runtime_error("Invalid vertex format: " + line);
 
             vertices.emplace_back(coords[0], coords[1], coords[2]);
-        } else if (line[0] == 'f') {
-            std::istringstream iss(line);
-            std::string token;
+        } else if ("f" == token) {
             std::vector<int> indices;
-            while (iss >> token) {
-                if (token[0] == 'f') continue;
-                std::istringstream index(token);
-                std::string idx;
-                while (std::getline(index, idx, '/')) {
-                    indices.push_back(std::stoi(idx));
-                }
+            while (sLine >> token) {
+                auto slashPos = token.find('/');
+                if (slashPos != std::string::npos)
+                    token = token.substr(0, slashPos);
+
+                indices.push_back(std::stoi(token));
             }
 
-            if (indices.size() != 3)
-                throw std::runtime_error("Invalid face format");
-
-            faces.emplace_back(vertices[indices[0] - 1],
-                               vertices[indices[1] - 1],
-                               vertices[indices[2] - 1]);
+            if (indices.size() == 3) {
+                faces.emplace_back(vertices[indices[0] - 1],
+                                   vertices[indices[1] - 1],
+                                   vertices[indices[2] - 1]);
+            } else if (indices.size() == 4) {
+                faces.emplace_back(vertices[indices[0] - 1],
+                                   vertices[indices[1] - 1],
+                                   vertices[indices[2] - 1]);
+                faces.emplace_back(vertices[indices[0] - 1],
+                                   vertices[indices[2] - 1],
+                                   vertices[indices[3] - 1]);
+            } else {
+                throw std::runtime_error("Invalid face format: " + line + " (" + std::to_string(indices.size()) + ")");
+            }
         }
     }
 
