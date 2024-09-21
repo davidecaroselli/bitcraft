@@ -6,21 +6,29 @@
 #define BITCRAFT_LIGHTSOURCE_H
 
 #include "geometry/vertex.h"
+#include "geometry/face.h"
+#include <algorithm>
 
 class LightSource {
 public:
-    LightSource() : direction({0, 0, -1}) {}
+    LightSource() : direction({0, 0, -1}), minBrightness(0), maxBrightness(1) {}
 
-    [[nodiscard]] const vertex_t &GetDirection() const {
-        return direction;
+    void SetBrightness(float min, float max) {
+        minBrightness = std::clamp(min, 0.0f, 1.0f);
+        maxBrightness = std::clamp(max, 0.0f, 1.0f);
     }
 
     void SetDirection(const vertex_t &d) {
         direction = d / d.length();
     }
 
+    void Apply(face_t &face) const;
+
 private:
     vertex_t direction;
+    float minBrightness;
+    float maxBrightness;
+
 };
 
 

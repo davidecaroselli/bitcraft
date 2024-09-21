@@ -116,9 +116,9 @@ void GameEngine::OnRender(float elapsedTime) {
     OnUpdate(elapsedTime);
 
     faces = CollectVisibleFaces(scene);
+    faces = ApplyLighting(faces);
     faces = ApplyCamera(faces);
     faces = ApplyDepthClipping(faces);
-    faces = ApplyLighting(faces);
     faces = ApplyProjection(faces);
     faces = SortByDepth(faces);
     faces = ApplyScreenClipping(faces);
@@ -167,13 +167,8 @@ std::vector<face_t> GameEngine::ApplyDepthClipping(std::vector<face_t> &scene, b
 }
 
 std::vector<face_t> &GameEngine::ApplyLighting(std::vector<face_t> &scene) const {
-    const vertex_t &lightDirection = light.GetDirection();
-
-    for (auto &face: scene) {
-        vertex_t normal = face.normal();
-        float brightness = fmax(.5f, normal * lightDirection);
-        face.color *= brightness;
-    }
+    for (auto &face: scene)
+        light.Apply(face);
 
     return scene;
 }

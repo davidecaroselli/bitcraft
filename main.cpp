@@ -8,7 +8,7 @@ public:
     mesh_t obj;
 
     explicit DemoEngine(const std::string &name) : GameEngine(name) {
-        obj = mesh_t::load_from_obj("../res/ArtisansHub.obj");
+        obj = mesh_t::load_from_obj("../res/mountains.obj");
     };
 
     bool OnUpdate(float elapsedTime) override {
@@ -38,8 +38,12 @@ public:
 int main() {
     DemoEngine game("Demo");
     game.SetClearColor({0.2, 0.2, 0.2});
-    game.SetWireframe(true);
+    game.SetWireframe(false);
     game.ShowDebugInfo();
+
+    game.light.SetDirection({1, 1, -1});
+    game.light.SetBrightness(0.6, 0.8);
+
     game.Start(640, 480, 60, true);
 
     return 0;
