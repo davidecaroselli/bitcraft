@@ -23,7 +23,7 @@ matrix_t PointAtMatrix(const vertex_t &pos, const vertex_t &target, const vertex
 }
 
 Camera::Camera() : position({0, 0, 0}),
-                   forward(0, 0, 1), right(1, 0, 0), up(0, 1, 0) {
+                   forward(0, 0, -1), right(1, 0, 0), up(0, 1, 0) {
 }
 
 matrix_t Camera::GetViewMatrix() const {

@@ -20,7 +20,7 @@ void DrawTriangle(const face_t &triangle, const color_t &color) {
     glBegin(GL_LINE_LOOP);
     glColor3f(color.r, color.g, color.b);
     for (const auto &v: triangle.vs)
-        glVertex2f(v.x, v.y);
+        glVertex2f(-v.x, v.y);
     glEnd();
 }
 
@@ -28,7 +28,7 @@ void FillTriangle(const face_t &triangle, const color_t &color) {
     glBegin(GL_TRIANGLES);
     glColor3f(color.r, color.g, color.b);
     for (const auto &v: triangle.vs)
-        glVertex2f(v.x, v.y);
+        glVertex2f(-v.x, v.y);
     glEnd();
 }
 
