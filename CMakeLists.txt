@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME} main.cpp
         src/geometry/vertex.h src/geometry/color.h
         src/geometry/matrix.h src/geometry/matrix.cpp
         src/geometry/face.h src/geometry/face.cpp
+        src/geometry/plane.h src/geometry/plane.cpp
         src/Screen.h src/Screen.cpp
         src/InputController.h src/InputController.cpp
         src/Camera.h src/Camera.cpp

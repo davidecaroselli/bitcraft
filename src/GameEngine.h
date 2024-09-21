@@ -9,6 +9,7 @@
 #include <vector>
 #include "geometry/color.h"
 #include "geometry/face.h"
+#include "geometry/plane.h"
 #include "Screen.h"
 #include "InputController.h"
 #include "Camera.h"
@@ -87,6 +88,8 @@ public:
     void SetDrawDistance(float near, float far) {
         zNear = near;
         zFar = far;
+        zNearPlane = plane_t({0, 0, zNear}, {0, 0, 1});
+
         ComputeProjectionMatrix();
     }
 
@@ -94,7 +97,7 @@ public:
 
     virtual bool OnUpdate(float elapsedTime) = 0;
 
-protected:
+private:
     const std::string name;
 
     DebugInfoView debugView;
@@ -103,6 +106,7 @@ protected:
     float fov = 90;
     float zFar = 1000;
     float zNear = 0.1;
+    plane_t zNearPlane = plane_t({0, 0, zNear}, {0, 0, 1});
 
     matrix_t prjMatrix = {0};
     color_t clearColor = {0, 0, 0};
@@ -110,6 +114,24 @@ protected:
     void OnRender(float elapsedTime);
 
     void ComputeProjectionMatrix();
+
+    [[nodiscard]] std::vector<face_t> CollectVisibleFaces(std::vector<face_t> &scene) const;
+
+    [[nodiscard]] std::vector<face_t> &ApplyCamera(std::vector<face_t> &scene) const;
+
+    [[nodiscard]] std::vector<face_t> ApplyDepthClipping(std::vector<face_t> &scene, bool debugColors = false) const;
+
+    [[nodiscard]] std::vector<face_t> &ApplyLighting(std::vector<face_t> &scene) const;
+
+    [[nodiscard]] std::vector<face_t> &ApplyProjection(std::vector<face_t> &scene) const;
+
+    [[nodiscard]] std::vector<face_t> &SortByDepth(std::vector<face_t> &scene) const;
+
+    [[nodiscard]] std::vector<face_t> ApplyScreenClipping(std::vector<face_t> &scene, bool debugColors = false) const;
+
+    void Rasterize(std::vector<face_t> &scene) const;
+
+    static void Clip(const plane_t &plane, const face_t &face, std::vector<face_t> &output, bool debugColors = false);
 };
 
 

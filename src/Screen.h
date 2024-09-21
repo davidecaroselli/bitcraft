@@ -6,7 +6,9 @@
 #define BITCRAFT_SCREEN_H
 
 #include <string>
+#include <vector>
 #include <unistd.h>
+#include "geometry/plane.h"
 
 class IScreenCallback {
 public:
@@ -17,6 +19,8 @@ public:
 
 class Screen {
 public:
+    const std::vector<plane_t> bounds;
+
     explicit Screen(IScreenCallback *cb);
 
     [[nodiscard]] unsigned int GetHeight() const {

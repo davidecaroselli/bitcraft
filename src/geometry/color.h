@@ -7,6 +7,13 @@
 
 struct color_t {
     float r, g, b;
+
+    inline color_t &operator*=(float v) {
+        r *= v;
+        g *= v;
+        b *= v;
+        return *this;
+    }
 };
 
 #endif //BITCRAFT_COLOR_H

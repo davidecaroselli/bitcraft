@@ -12,7 +12,7 @@ public:
     };
 
     bool OnUpdate(float elapsedTime) override {
-        float speed = 80., rotSpeed = 5;
+        float speed = 20., rotSpeed = 5;
         if (input.IsKeyPressed('w')) camera.MoveForward(speed * elapsedTime);
         if (input.IsKeyPressed('s')) camera.MoveBackward(speed * elapsedTime);
         if (input.IsKeyPressed('a')) camera.Rotate(0, rotSpeed * elapsedTime, 0);
@@ -26,7 +26,9 @@ public:
         scene.reserve(obj.faces.size());
 
         for (const auto &face: obj.faces) {
-            scene.push_back(face);
+            scene.push_back(face * (
+                    matrix_t::Translate(0, 0, 20)
+            ));
         }
 
         return true;
@@ -38,7 +40,7 @@ int main() {
     game.SetClearColor({0.2, 0.2, 0.2});
     game.SetWireframe(true);
     game.ShowDebugInfo();
-    game.Start(640, 480, 60, false);
+    game.Start(640, 480, 60, true);
 
     return 0;
 }

@@ -8,7 +8,13 @@
 
 static Screen *instance = nullptr;
 
-Screen::Screen(IScreenCallback *cb) : callback(cb) {
+Screen::Screen(IScreenCallback *cb)
+        : callback(cb), bounds({
+                                       plane_t({-1, 0, 0}, {1, 0, 0}),  // left
+                                       plane_t({0, 1, 0}, {0, -1, 0}),  // top
+                                       plane_t({1, 0, 0}, {-1, 0, 0}),  // right
+                                       plane_t({0, -1, 0}, {0, 1, 0})   // bottom
+                               }) {
     if (instance != nullptr)
         throw std::runtime_error("Screen instance already exists");
     instance = this;
