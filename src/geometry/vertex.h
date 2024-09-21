@@ -27,12 +27,44 @@ struct vertex_t {
         return {x - v.x, y - v.y, z - v.z};
     }
 
+    inline vertex_t &operator-=(const vertex_t &v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+        return *this;
+    }
+
     inline vertex_t operator+(const vertex_t &v) const {
         return {x + v.x, y + v.y, z + v.z};
     }
 
+    inline vertex_t &operator+=(const vertex_t &v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+        return *this;
+    }
+
     inline vertex_t operator/(float v) const {
         return {x / v, y / v, z / v};
+    }
+
+    inline vertex_t &operator/=(float v) {
+        x /= v;
+        y /= v;
+        z /= v;
+        return *this;
+    }
+
+    inline vertex_t operator*(float v) const {
+        return {x * v, y * v, z * v};
+    }
+
+    inline vertex_t &operator*=(float v) {
+        x *= v;
+        y *= v;
+        z *= v;
+        return *this;
     }
 
     // dot product
@@ -49,6 +81,14 @@ struct vertex_t {
         if (ow == 0) ow = 1;
 
         return {ox / ow, oy / ow, oz / ow};
+    }
+
+    inline vertex_t &operator*=(const matrix_t &m) {
+        vertex_t r = *this * m;
+        x = r.x;
+        y = r.y;
+        z = r.z;
+        return *this;
     }
 };
 

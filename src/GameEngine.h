@@ -47,19 +47,23 @@ public:
         clearColor = color;
     }
 
-    [[nodiscard]] bool ShowDebugInfo() const {
+    [[nodiscard]] bool IsDebugInfoVisible() const {
         return showDebugInfo;
     }
 
-    void SetShowDebugInfo(bool show) {
-        showDebugInfo = show;
+    void ShowDebugInfo() {
+        showDebugInfo = true;
     }
 
-    [[nodiscard]] bool ShowWireframe() const {
+    void HideDebugInfo() {
+        showDebugInfo = false;
+    }
+
+    [[nodiscard]] bool IsWireframeVisible() const {
         return wireframe;
     }
 
-    void SetShowWireframe(bool show) {
+    void SetWireframe(bool show) {
         wireframe = show;
     }
 

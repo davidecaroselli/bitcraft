@@ -20,3 +20,11 @@ vertex_t face_t::normal() const {
 face_t face_t::operator*(const matrix_t &m) const {
     return {vs[0] * m, vs[1] * m, vs[2] * m, color};
 }
+
+face_t &face_t::operator*=(const matrix_t &m) {
+    vs[0] *= m;
+    vs[1] *= m;
+    vs[2] *= m;
+
+    return *this;
+}

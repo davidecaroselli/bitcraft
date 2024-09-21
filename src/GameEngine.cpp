@@ -6,8 +6,6 @@
 #include <iostream>
 #include <iomanip>
 #include <GLUT/glut.h>
-#include <unistd.h>
-#include <sys/time.h>
 #include <sstream>
 
 // Draw functions ---------------------------------------------------
@@ -113,30 +111,41 @@ void GameEngine::OnRender(float elapsedTime) {
     // Update scene
     this->OnUpdate(elapsedTime);
 
-    // Project scene
-    std::vector<face_t> facesToRaster;
-    facesToRaster.reserve(scene.size());
+    // Collect and light visible faces
+    const vertex_t &cameraPos = camera.GetPosition();
+    const vertex_t &lightDirection = light.GetDirection();
 
-    auto &lightDirection = light.GetDirection();
+    std::vector<face_t> faces;
+    faces.reserve(scene.size());
+
     for (auto &face: scene) {
         vertex_t normal = face.normal();
 
-        if (normal * (face[0] - camera.GetPosition()) < 0) {
+        if (normal * (face[0] - cameraPos) < 0) {
             float color = normal * lightDirection;
             face.color = {color, color, color};
 
-            facesToRaster.push_back(face * prjMatrix);
+            faces.push_back(face);
         }
     }
 
+    // Apply camera matrix
+    matrix_t viewMatrix = camera.GetViewMatrix();
+    for (auto &face: faces)
+        face *= viewMatrix;
+
+    // Apply projection matrix
+    for (auto &face: faces)
+        face *= prjMatrix;
+
     // Rasterize scene
-    std::sort(facesToRaster.begin(), facesToRaster.end(), [](const face_t &a, const face_t &b) {
+    std::sort(faces.begin(), faces.end(), [](const face_t &a, const face_t &b) {
         float az = (a[0].z + a[1].z + a[2].z) / 3.f;
         float bz = (b[0].z + b[1].z + b[2].z) / 3.f;
         return az > bz;
     });
 
-    for (const auto &face: facesToRaster) {
+    for (const auto &face: faces) {
         FillTriangle(face, face.color);
         if (wireframe)
             DrawTriangle(face, {1, 1, 1});

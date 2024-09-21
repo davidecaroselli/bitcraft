@@ -24,6 +24,8 @@ struct face_t {
     [[nodiscard]] vertex_t normal() const;
 
     face_t operator*(const matrix_t &m) const;
+
+    face_t &operator*=(const matrix_t &m);
 };
 
 
