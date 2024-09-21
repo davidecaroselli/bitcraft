@@ -2,15 +2,17 @@
 // Created by Davide Caroselli on 12/09/24.
 //
 
-#ifndef ENGINE3D_ENGINE3D_H
-#define ENGINE3D_ENGINE3D_H
+#ifndef BITCRAFT_GAMEENGINE_H
+#define BITCRAFT_GAMEENGINE_H
 
 #include <string>
-#include "Screen.h"
+#include <vector>
 #include "geometry/color.h"
 #include "geometry/face.h"
+#include "Screen.h"
 #include "InputController.h"
 #include "Camera.h"
+#include "LightSource.h"
 
 class DebugInfoView {
 public:
@@ -28,15 +30,22 @@ private:
     float fps = 0;
 };
 
-class Engine3D {
+class GameEngine {
     friend class ScreenCallback;
 
 public:
     Screen screen;
     InputController input;
     Camera camera;
+    LightSource light;
 
-    explicit Engine3D(std::string name);
+    std::vector<face_t> scene;
+
+    explicit GameEngine(std::string name);
+
+    void SetClearColor(const color_t &color) {
+        clearColor = color;
+    }
 
     [[nodiscard]] bool ShowDebugInfo() const {
         return showDebugInfo;
@@ -44,6 +53,14 @@ public:
 
     void SetShowDebugInfo(bool show) {
         showDebugInfo = show;
+    }
+
+    [[nodiscard]] bool ShowWireframe() const {
+        return wireframe;
+    }
+
+    void SetShowWireframe(bool show) {
+        wireframe = show;
     }
 
     [[nodiscard]] float GetFOV() const {
@@ -73,24 +90,18 @@ public:
 
     virtual bool OnUpdate(float elapsedTime) = 0;
 
-    // Draw functions ---------------------------------------------------
-
-    void ClearScreen(const color_t &color);
-
-    void DrawTriangle(const face_t &triangle, const color_t &color);
-
-    void FillTriangle(const face_t &triangle, const color_t &color);
-
 protected:
     const std::string name;
 
     DebugInfoView debugView;
     bool showDebugInfo = false;
+    bool wireframe = false;
     float fov = 90;
     float zFar = 1000;
     float zNear = 0.1;
 
     matrix_t prjMatrix = {0};
+    color_t clearColor = {0, 0, 0};
 
     void OnRender(float elapsedTime);
 
@@ -98,4 +109,4 @@ protected:
 };
 
 
-#endif //ENGINE3D_ENGINE3D_H
+#endif //BITCRAFT_GAMEENGINE_H

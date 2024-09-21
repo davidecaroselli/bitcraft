@@ -13,7 +13,8 @@ add_executable(${PROJECT_NAME} main.cpp
         src/Screen.h src/Screen.cpp
         src/InputController.h src/InputController.cpp
         src/Camera.h src/Camera.cpp
-        src/Engine3D.h src/Engine3D.cpp)
+        src/LightSource.h src/LightSource.cpp
+        src/GameEngine.h src/GameEngine.cpp)
 
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
