@@ -37,13 +37,13 @@ void DebugInfoView::OnRender(float elapsedTime) {
     }
 }
 
-void DebugInfoView::DrawToScreen(Screen *screen) const {
+void DebugInfoView::DrawToScreen(Screen &screen) const {
     std::stringstream stream;
     stream << "FPS: " << std::fixed << std::setprecision(1) << fps;
     std::string fpsLog = stream.str();
 
-    float glScaleX = 2.f / (float) screen->GetWidth();
-    float glScaleY = 2.f / (float) screen->GetHeight();
+    float glScaleX = 2.f / (float) screen.GetWidth();
+    float glScaleY = 2.f / (float) screen.GetHeight();
     float labelWidth = 8 * (float) fpsLog.size();
 
     glColor3f(0, 0, 0);
@@ -55,24 +55,21 @@ void DebugInfoView::DrawToScreen(Screen *screen) const {
         glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
 }
 
-Engine3D::Engine3D(std::string name) : name(std::move(name)), screen(Screen::GetInstance()),
-                                       input(InputController::GetInstance()) {
-    auto *callback = new ScreenCallback(this);
-    screen->SetCallback(callback);
+Engine3D::Engine3D(std::string name) : name(std::move(name)), screen(new ScreenCallback(this)) {
 }
 
 void Engine3D::Start(unsigned int width, unsigned int height, unsigned int fps, bool fullscreen) {
-    screen->Init(name, width, height, fps);
-    screen->SetFullscreen(fullscreen);
+    screen.Init(name, width, height, fps);
+    screen.SetFullscreen(fullscreen);
 
-    input->Init();
+    input.Init();
 
     ComputeProjectionMatrix();
     glutMainLoop();
 }
 
 void Engine3D::ComputeProjectionMatrix() {
-    auto a = screen->GetAspectRatio();
+    auto a = screen.GetAspectRatio();
     auto f = (float) (1. / tan(fov * 0.5 * M_PI / 180.));
     auto q = zFar / (zFar - zNear);
 
@@ -87,7 +84,7 @@ void Engine3D::ComputeProjectionMatrix() {
 void Engine3D::OnRender(float elapsedTime) {
     debugView.OnRender(elapsedTime);
 
-    this->Render(elapsedTime);
+    this->OnUpdate(elapsedTime);
 
     if (showDebugInfo)
         debugView.DrawToScreen(screen);

@@ -10,6 +10,7 @@
 #include "geometry/color.h"
 #include "geometry/face.h"
 #include "InputController.h"
+#include "Camera.h"
 
 class DebugInfoView {
 public:
@@ -17,7 +18,7 @@ public:
 
     void OnRender(float elapsedTime);
 
-    void DrawToScreen(Screen *screen) const;
+    void DrawToScreen(Screen &screen) const;
 
 private:
     const float updateSecs;
@@ -31,11 +32,11 @@ class Engine3D {
     friend class ScreenCallback;
 
 public:
-    explicit Engine3D(std::string name);
+    Screen screen;
+    InputController input;
+    Camera camera;
 
-    [[nodiscard]] const Screen *GetScreen() const {
-        return screen;
-    }
+    explicit Engine3D(std::string name);
 
     [[nodiscard]] bool ShowDebugInfo() const {
         return showDebugInfo;
@@ -70,7 +71,7 @@ public:
 
     void Start(unsigned int width, unsigned int height, unsigned int fps = 60, bool fullscreen = false);
 
-    virtual bool Render(float elapsedTime) = 0;
+    virtual bool OnUpdate(float elapsedTime) = 0;
 
     // Draw functions ---------------------------------------------------
 
@@ -82,8 +83,6 @@ public:
 
 protected:
     const std::string name;
-    Screen *screen;
-    InputController *input;
 
     DebugInfoView debugView;
     bool showDebugInfo = false;

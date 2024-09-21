@@ -6,25 +6,22 @@
 #include <GLUT/glut.h>
 #include <iostream>
 
-InputController *InputController::instance = nullptr;
-
-InputController *InputController::GetInstance() {
-    if (!instance)
-        instance = new InputController();
-
-    return instance;
-}
+static InputController *instance = nullptr;
 
 InputController::InputController() {
+    if (instance)
+        throw std::runtime_error("InputController instance already exists");
+    instance = this;
+
     for (bool &key: keys)
         key = false;
 }
 
 void InputController::Init() {
     glutKeyboardFunc([](unsigned char key, int x, int y) {
-        InputController::GetInstance()->keys[key] = true;
+        instance->keys[key] = true;
     });
     glutKeyboardUpFunc([](unsigned char key, int x, int y) {
-        InputController::GetInstance()->keys[key] = false;
+        instance->keys[key] = false;
     });
 }

@@ -17,7 +17,7 @@ public:
 
 class Screen {
 public:
-    static Screen *GetInstance();
+    explicit Screen(IScreenCallback *cb);
 
     [[nodiscard]] unsigned int GetHeight() const {
         return height;
@@ -47,23 +47,15 @@ public:
 
     void SetFullscreen(bool value);
 
-    void SetCallback(IScreenCallback *cb) {
-        this->callback = cb;
-    }
-
 private:
-    static Screen *instance;
-
     unsigned int width = 0;
     unsigned int height = 0;
     float aspectRatio = 1;
 
     unsigned int fps = 60;
     bool fullscreen = false;
-    IScreenCallback *callback = nullptr;
+    IScreenCallback *callback;
     uint64_t lastRenderTimestamp = 0;
-
-    Screen() = default;
 
     void OnIdle();
 

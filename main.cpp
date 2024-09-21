@@ -5,14 +5,11 @@
 
 class GameEngine : public Engine3D {
 public:
-    vertex_t camera{};
     vertex_t light{};
     mesh_t obj;
 
     explicit GameEngine(const std::string &name) : Engine3D(name) {
-        obj = mesh_t::load_from_obj("../res/teapot.obj");
-
-        camera = {0, 0, 0};
+        obj = mesh_t::load_from_obj("../res/axis.obj");
 
         light = {1, 1, -1};
         light = light / light.length();
@@ -22,14 +19,14 @@ public:
     float translateY = 0;
     float translateZ = 10;
 
-    bool Render(float elapsedTime) override {
+    bool OnUpdate(float elapsedTime) override {
         float speed = 80.;
-        if (input->IsKeyPressed('w')) translateZ -= speed * elapsedTime;
-        if (input->IsKeyPressed('s')) translateZ += speed * elapsedTime;
-        if (input->IsKeyPressed('a')) translateX += speed * elapsedTime;
-        if (input->IsKeyPressed('d')) translateX -= speed * elapsedTime;
-        if (input->IsKeyPressed('q')) translateY += speed * elapsedTime;
-        if (input->IsKeyPressed('e')) translateY -= speed * elapsedTime;
+        if (input.IsKeyPressed('w')) translateZ -= speed * elapsedTime;
+        if (input.IsKeyPressed('s')) translateZ += speed * elapsedTime;
+        if (input.IsKeyPressed('a')) translateX += speed * elapsedTime;
+        if (input.IsKeyPressed('d')) translateX -= speed * elapsedTime;
+        if (input.IsKeyPressed('q')) translateY += speed * elapsedTime;
+        if (input.IsKeyPressed('e')) translateY -= speed * elapsedTime;
 
         ClearScreen({0.2f, 0.2f, 0.2f});
 
@@ -48,7 +45,7 @@ public:
         for (auto &face: scene) {
             vertex_t normal = face.normal();
 
-            if (normal * (face[0] - camera) < 0) {
+            if (normal * (face[0] - camera.GetPosition()) < 0) {
                 float color = normal * light;
                 face.color = {color, color, color};
 
@@ -66,7 +63,7 @@ public:
 
         for (const auto &face: facesToRaster) {
             FillTriangle(face, face.color);
-//            DrawTriangle(face, {1, 1, 1});
+            DrawTriangle(face, {1, 1, 1});
         }
 
         return true;

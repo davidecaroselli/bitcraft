@@ -6,13 +6,12 @@
 #include <GLUT/glut.h>
 #include <sys/time.h>
 
-Screen *Screen::instance = nullptr;
+static Screen *instance = nullptr;
 
-Screen *Screen::GetInstance() {
-    if (instance == nullptr)
-        instance = new Screen();
-
-    return instance;
+Screen::Screen(IScreenCallback *cb) : callback(cb) {
+    if (instance != nullptr)
+        throw std::runtime_error("Screen instance already exists");
+    instance = this;
 }
 
 void Screen::Init(const std::string &title, unsigned int width, unsigned int height, unsigned int fps) {

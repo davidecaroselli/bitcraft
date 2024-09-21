@@ -8,7 +8,7 @@
 
 class InputController {
 public:
-    static InputController *GetInstance();
+    InputController();
 
     void Init();
 
@@ -17,11 +17,7 @@ public:
     }
 
 private:
-    static InputController *instance;
-
     bool keys[256]{};
-
-    InputController();
 };
 
 
