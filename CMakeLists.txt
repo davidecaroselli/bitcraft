@@ -7,7 +7,6 @@ include_directories(src)
 
 add_executable(${PROJECT_NAME} main.cpp
         src/utils/stb_image.h
-        src/core/textures.h
         src/core/Shaders.h src/core/Shaders.cpp
         src/Window.h src/Window.cpp
         src/InputController.h src/InputController.cpp
