@@ -7,9 +7,10 @@
 #include <fstream>
 #include <sstream>
 #include <glm/gtc/matrix_transform.hpp>
-#include <common/shaders.h>
 #include "Window.h"
+#include "core/Shaders.h"
 #include "InputController.h"
+#include <memory>
 
 using namespace glm;
 namespace bc = bitcraft;
@@ -173,29 +174,28 @@ int main() {
 
     GLuint buffer = Init();
 
-    std::vector<bc::shader_t> shaders = {
-            bc::shader_t::builtin("DefaultVertexShader.glsl", GL_VERTEX_SHADER),
-            bc::shader_t::builtin("DefaultFragmentShader.glsl", GL_FRAGMENT_SHADER)
-    };
-    GLuint programID = bc::LoadShaders(shaders);
+    bc::Shaders::Loader loader;
+    loader.LoadBuiltinShader("DefaultVertexShader.glsl", GL_VERTEX_SHADER);
+    loader.LoadBuiltinShader("DefaultFragmentShader.glsl", GL_FRAGMENT_SHADER);
+    std::shared_ptr<bc::Shaders> shaders(loader.Build());
 
-    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+    GLuint MatrixID = shaders->NewVariable("MVP");
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
-// Accept fragment if it closer to the camera than the former one
+    // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
 
     float offset = 0;
 
     do {
+        shaders->Use();
+
         // Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
         glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(programID);
-
-        offset += 0.02;
+        offset += 0.03;
         mat4 mvp = get_mvp_matrix(screen, cosf(offset) * 10);
         // Send our transformation to the currently bound shader, in the "MVP" uniform
         // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)

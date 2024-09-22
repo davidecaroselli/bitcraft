@@ -6,12 +6,13 @@ set(CMAKE_CXX_STANDARD 20)
 include_directories(src)
 
 add_executable(${PROJECT_NAME} main.cpp
-        src/common/shaders.h src/common/shaders.cpp
+        src/utils/stb_image.h
+        src/core/textures.h
+        src/core/Shaders.h src/core/Shaders.cpp
         src/Window.h src/Window.cpp
-        src/InputController.cpp
-        src/InputController.h
-        src/Model.cpp
-        src/Model.h)
+        src/InputController.h src/InputController.cpp
+        src/Model.h src/Model.cpp
+)
 
 find_package(GLEW 2.0 REQUIRED)
 find_package(GLFW3 3.3 REQUIRED)
