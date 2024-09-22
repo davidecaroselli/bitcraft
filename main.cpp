@@ -8,11 +8,11 @@ public:
     mesh_t obj;
 
     explicit DemoEngine(const std::string &name) : GameEngine(name) {
-        obj = mesh_t::load_from_obj("../res/crashbandicoot.obj");
+        obj = mesh_t::load_from_obj("../res/ArtisansHub.obj");
     };
 
     bool OnUpdate(float elapsedTime) override {
-        float speed = 100., rotSpeed = 5;
+        float speed = 50., rotSpeed = 5;
         if (input.IsKeyPressed('w')) camera.MoveForward(speed * elapsedTime);
         if (input.IsKeyPressed('s')) camera.MoveBackward(speed * elapsedTime);
         if (input.IsKeyPressed('a')) camera.Rotate(0, -rotSpeed * elapsedTime, 0);

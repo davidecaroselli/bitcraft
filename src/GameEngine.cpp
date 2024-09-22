@@ -137,9 +137,7 @@ std::vector<face_t> GameEngine::CollectVisibleFaces(std::vector<face_t> &scene) 
     faces.reserve(scene.size());
 
     for (auto &face: scene) {
-        vertex_t normal = face.normal();
-
-        if (normal * (face[0] - cameraPos) < 0)
+        if (face.normal * (face[0] - cameraPos) < 0)
             faces.push_back(face);
     }
 
