@@ -8,6 +8,7 @@ include_directories(src)
 add_executable(${PROJECT_NAME} main.cpp
         src/utils/stb_image.h
         src/core/Shaders.h src/core/Shaders.cpp
+        src/core/Texture.h src/core/Texture.cpp
         src/Window.h src/Window.cpp
         src/InputController.h src/InputController.cpp
         src/Model.h src/Model.cpp
@@ -25,3 +26,15 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/res/shaders
         ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/textures
+        ${CMAKE_CURRENT_BINARY_DIR}/textures)
+
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/models
+        ${CMAKE_CURRENT_BINARY_DIR}/models)
