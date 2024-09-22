@@ -6,18 +6,22 @@ set(CMAKE_CXX_STANDARD 20)
 include_directories(src)
 
 add_executable(${PROJECT_NAME} main.cpp
-        src/geometry/mesh.h src/geometry/mesh.cpp
-        src/geometry/vertex.h src/geometry/color.h
-        src/geometry/matrix.h src/geometry/matrix.cpp
-        src/geometry/face.h src/geometry/face.cpp
-        src/geometry/plane.h src/geometry/plane.cpp
-        src/Screen.h src/Screen.cpp
-        src/InputController.h src/InputController.cpp
-        src/Camera.h src/Camera.cpp
-        src/LightSource.h src/LightSource.cpp
-        src/GameEngine.h src/GameEngine.cpp)
+        src/common/shaders.h src/common/shaders.cpp
+        src/Window.h src/Window.cpp
+        src/InputController.cpp
+        src/InputController.h
+        src/Model.cpp
+        src/Model.h)
 
-find_package(GLUT REQUIRED)
+find_package(GLEW 2.0 REQUIRED)
+find_package(GLFW3 3.3 REQUIRED)
+find_package(GLM REQUIRED)
 find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
+include_directories(${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw ${GLM_LIBRARIES})
+
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/shaders
+        ${CMAKE_CURRENT_BINARY_DIR}/shaders)

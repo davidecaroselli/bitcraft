@@ -1,27 +1,19 @@
 //
-// Created by Davide Caroselli on 17/09/24.
+// Created by Davide Caroselli on 22/09/24.
 //
 
 #include "InputController.h"
-#include <GLUT/glut.h>
-#include <iostream>
 
-static InputController *instance = nullptr;
+using namespace bitcraft;
 
-InputController::InputController() {
-    if (instance)
-        throw std::runtime_error("InputController instance already exists");
-    instance = this;
+void InputController::Attach(const Window &window) {
+    if (window.handle == nullptr)
+        throw std::runtime_error("Window has not been created yet");
 
-    for (bool &key: keys)
-        key = false;
+    wHandle = window.handle;
+    glfwSetInputMode(wHandle, GLFW_STICKY_KEYS, GL_TRUE);
 }
 
-void InputController::Init() {
-    glutKeyboardFunc([](unsigned char key, int x, int y) {
-        instance->keys[key] = true;
-    });
-    glutKeyboardUpFunc([](unsigned char key, int x, int y) {
-        instance->keys[key] = false;
-    });
+bool InputController::IsKeyPressed(int key) {
+    return wHandle && glfwGetKey(wHandle, key) == GLFW_PRESS;
 }
