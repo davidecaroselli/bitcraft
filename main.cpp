@@ -11,6 +11,7 @@
 #include "core/Shaders.h"
 #include "InputController.h"
 #include "core/Texture.h"
+#include "Camera.h"
 #include <memory>
 
 using namespace glm;
@@ -95,31 +96,14 @@ void Draw() {
     glDisableVertexAttribArray(1);
 }
 
-glm::mat4 get_mvp_matrix(const bc::Window &window, float zOffset) {
-    // Projection matrix: 45° Field of View, 4:3 ratio, display range: 0.1 unit <-> 100 units
-    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), window.GetAspectRatio(), 0.1f, 100.0f);
-
-    // Camera matrix
-    glm::mat4 View = glm::lookAt(
-            glm::vec3(4, 3, zOffset), // Camera is at (4,3,3), in World Space
-            glm::vec3(0, 0, 0), // and looks at the origin
-            glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-    );
-
-    // Model matrix: an identity matrix (model will be at the origin)
-    auto Model =
-            glm::rotate(glm::mat4(1.0f), glm::radians(zOffset * 360), glm::vec3(0, 1, 0))
-            * glm::rotate(glm::mat4(1.0f), glm::radians((1 - zOffset) * 360), glm::vec3(1, 0, 0));
-    // Our ModelViewProjection: multiplication of our 3 matrices
-    return Projection * View * Model; // Remember, matrix multiplication is the other way around
-}
-
 int main() {
     bc::Window screen(4);
     screen.Create("Bitcraft", 1024, 768);
 
     bc::InputController controller;
     controller.Attach(screen);
+
+    bc::Camera camera({0, 0, 5});
 
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
@@ -155,7 +139,7 @@ int main() {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    float offset = 0;
+    double lastTime = glfwGetTime();
 
     do {
         // Use our shader
@@ -164,8 +148,20 @@ int main() {
         glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        offset += 0.005;
-        glm::mat4 MVP = get_mvp_matrix(screen, cosf(offset));
+        double currentTime = glfwGetTime();
+        auto deltaTime = float(currentTime - lastTime);
+        lastTime = currentTime;
+
+        float dy = 0;
+        if (controller.IsKeyPressed(GLFW_KEY_K)) dy += controller.GetSpeed();
+        if (controller.IsKeyPressed(GLFW_KEY_M)) dy -= controller.GetSpeed();
+
+        bc::movement_t mouse = controller.GetMouseMovement();
+        bc::movement_t wasd = controller.GetWASDMovement();
+        camera.Rotate(-mouse.horizontal * deltaTime, 0);
+        camera.Move(wasd.horizontal * deltaTime, dy * deltaTime, -wasd.vertical * deltaTime);
+
+        glm::mat4 MVP = camera.GetViewProjectionMatrix(screen.GetAspectRatio());
         // Send our transformation to the currently bound shader,
         // in the "MVP" uniform
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
