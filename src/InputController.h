@@ -16,7 +16,7 @@ namespace bitcraft {
 
     class InputController {
     public:
-        explicit InputController(float sensitivity = 0.4f, float speed = 6.0f)
+        explicit InputController(float sensitivity = 1.5f, float speed = 60.0f)
                 : sensitivity(sensitivity), speed(speed) {};
 
         [[nodiscard]] float GetSensitivity() const {

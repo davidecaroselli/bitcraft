@@ -13,7 +13,7 @@ namespace bitcraft {
     class Camera {
     public:
         explicit Camera(glm::vec3 position = {0, 0, 0}, float hAngle = M_PI, float vAngle = 0,
-                        float fov = 45.f, float zNear = .1f, float zFar = 100.f)
+                        float fov = 45.f, float zNear = .1f, float zFar = 1000.f)
                 : position(position), hAngle(hAngle), vAngle(vAngle), fov(fov), zNear(zNear), zFar(zFar) {};
 
         [[nodiscard]] float GetFov() const {

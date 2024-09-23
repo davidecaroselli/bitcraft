@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME} main.cpp
         src/Window.h src/Window.cpp
         src/InputController.h src/InputController.cpp
         src/Camera.h src/Camera.cpp
+        src/Model.h src/Model.cpp
 )
 
 find_package(GLEW 2.0 REQUIRED)

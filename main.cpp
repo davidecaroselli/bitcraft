@@ -12,89 +12,59 @@
 #include "InputController.h"
 #include "core/Texture.h"
 #include "Camera.h"
+#include "Model.h"
 #include <memory>
 
 using namespace glm;
 namespace bc = bitcraft;
-
-// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-const int triCount = 12;
-static const GLfloat g_vertex_buffer_data[] = {
-        0, 0, 0, 0, 1, 0, 1, 1, 0,
-        0, 0, 0, 1, 1, 0, 1, 0, 0, // front
-
-        0, 0, -1, 1, 1, -1, 0, 1, -1,
-        0, 0, -1, 1, 0, -1, 1, 1, -1, // back
-
-        0, 0, 0, 0, 0, -1, 0, 1, 0,
-        0, 0, -1, 0, 1, -1, 0, 1, 0, // left
-
-        1, 0, 0, 1, 1, 0, 1, 0, -1,
-        1, 0, -1, 1, 1, 0, 1, 1, -1, // right
-
-        0, 1, 0, 0, 1, -1, 1, 1, -1,
-        0, 1, 0, 1, 1, -1, 1, 1, 0, // top
-
-        0, 0, 0, 1, 0, -1, 0, 0, -1,
-        0, 0, 0, 1, 0, 0, 1, 0, -1,  // bottom
-};
-
-// Two UV coordinatesfor each vertex. They were created with Blender.
-static const GLfloat g_uv_buffer_data[] = {
-        0, 0, 0, 1, 1, 1,
-        0, 0, 1, 1, 1, 0,  // front
-
-        0, 0, 1, 1, 0, 1,
-        0, 0, 1, 0, 1, 1,  // back
-
-        0, 0, 1, 0, 0, 1,
-        0, 0, 0, 1, 1, 1,  // left
-
-        0, 0, 0, 1, 1, 0,
-        1, 0, 0, 1, 1, 1, // right
-
-        0, 0, 0, 1, 1, 1,
-        0, 0, 1, 1, 1, 0, // top
-
-        0, 0, 1, 1, 0, 1,
-        0, 0, 1, 0, 1, 1, // bottom
-};
-
-
+//
+//// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
+//// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
+//const int triCount = 12;
+//static const GLfloat g_vertex_buffer_data[] = {
+//        0, 0, 0, 0, 1, 0, 1, 1, 0,
+//        0, 0, 0, 1, 1, 0, 1, 0, 0, // front
+//
+//        0, 0, -1, 1, 1, -1, 0, 1, -1,
+//        0, 0, -1, 1, 0, -1, 1, 1, -1, // back
+//
+//        0, 0, 0, 0, 0, -1, 0, 1, 0,
+//        0, 0, -1, 0, 1, -1, 0, 1, 0, // left
+//
+//        1, 0, 0, 1, 1, 0, 1, 0, -1,
+//        1, 0, -1, 1, 1, 0, 1, 1, -1, // right
+//
+//        0, 1, 0, 0, 1, -1, 1, 1, -1,
+//        0, 1, 0, 1, 1, -1, 1, 1, 0, // top
+//
+//        0, 0, 0, 1, 0, -1, 0, 0, -1,
+//        0, 0, 0, 1, 0, 0, 1, 0, -1,  // bottom
+//};
+//
+//// Two UV coordinatesfor each vertex. They were created with Blender.
+//static const GLfloat g_uv_buffer_data[] = {
+//        0, 0, 0, 1, 1, 1,
+//        0, 0, 1, 1, 1, 0,  // front
+//
+//        0, 0, 1, 1, 0, 1,
+//        0, 0, 1, 0, 1, 1,  // back
+//
+//        0, 0, 1, 0, 0, 1,
+//        0, 0, 0, 1, 1, 1,  // left
+//
+//        0, 0, 0, 1, 1, 0,
+//        1, 0, 0, 1, 1, 1, // right
+//
+//        0, 0, 0, 1, 1, 1,
+//        0, 0, 1, 1, 1, 0, // top
+//
+//        0, 0, 1, 1, 0, 1,
+//        0, 0, 1, 0, 1, 1, // bottom
+//};
+//
+//
 GLuint vertexbuffer;
 GLuint uvbuffer;
-
-void Draw() {
-// 1st attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(
-            0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-            3,                  // size
-            GL_FLOAT,           // type
-            GL_FALSE,           // normalized?
-            0,                  // stride
-            (void *) 0            // array buffer offset
-    );
-
-    // 2nd attribute buffer : colors
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glVertexAttribPointer(
-            1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-            2,                                // size
-            GL_FLOAT,                         // type
-            GL_FALSE,                         // normalized?
-            0,                                // stride
-            (void *) 0                          // array buffer offset
-    );
-
-// Draw the triangle !
-    glDrawArrays(GL_TRIANGLES, 0, triCount * 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-}
 
 int main() {
     bc::Window screen(4);
@@ -105,6 +75,8 @@ int main() {
 
     bc::Camera camera({0, 0, 5});
 
+    bc::Model model("models/Aridia.obj");
+
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
@@ -114,7 +86,7 @@ int main() {
     loader.LoadBuiltinShader("DefaultFragmentShader.glsl", GL_FRAGMENT_SHADER);
     std::shared_ptr<bc::Shaders> shaders(loader.Build());
 
-    bc::Texture texture("textures/box.jpg");
+    bc::Texture texture("textures/High.png");
     GLuint Texture = texture.id;
     // Get a handle for our "myTextureSampler" uniform
     GLuint TextureID = shaders->NewVariable("myTextureSampler");
@@ -123,15 +95,15 @@ int main() {
     // Generate 1 buffer, put the resulting identifier in vertexbuffer
     glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, model.vertices.size() * sizeof(glm::vec3), &model.vertices[0], GL_STATIC_DRAW);
 
     glGenBuffers(1, &uvbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, model.uvs.size() * sizeof(glm::vec2), &model.uvs[0], GL_STATIC_DRAW);
 
     GLuint MatrixID = shaders->NewVariable("MVP");
 
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
     // Accept fragment if it closer to the camera than the former one
@@ -153,8 +125,8 @@ int main() {
         lastTime = currentTime;
 
         float dy = 0;
-        if (controller.IsKeyPressed(GLFW_KEY_K)) dy += controller.GetSpeed();
-        if (controller.IsKeyPressed(GLFW_KEY_M)) dy -= controller.GetSpeed();
+        if (controller.IsKeyPressed(GLFW_KEY_K)) dy += controller.GetSpeed() / 2.f;
+        if (controller.IsKeyPressed(GLFW_KEY_M)) dy -= controller.GetSpeed() / 2.f;
 
         bc::movement_t mouse = controller.GetMouseMovement();
         bc::movement_t wasd = controller.GetWASDMovement();
@@ -172,7 +144,35 @@ int main() {
         // Set our "myTextureSampler" sampler to use Texture Unit 0
         glUniform1i(TextureID, 0);
 
-        Draw();
+        // draw model
+        // 1st attribute buffer : vertices
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glVertexAttribPointer(
+                0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+                3,                  // size
+                GL_FLOAT,           // type
+                GL_FALSE,           // normalized?
+                0,                  // stride
+                (void *) 0            // array buffer offset
+        );
+
+        // 2nd attribute buffer : colors
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+        glVertexAttribPointer(
+                1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+                2,                                // size
+                GL_FLOAT,                         // type
+                GL_FALSE,                         // normalized?
+                0,                                // stride
+                (void *) 0                          // array buffer offset
+        );
+
+// Draw the triangle !
+        glDrawArrays(GL_TRIANGLES, 0, model.vertices.size()); // Starting from vertex 0; 3 vertices total -> 1 triangle
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
 
         // Swap buffers
         screen.Refresh();
